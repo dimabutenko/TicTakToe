@@ -5,11 +5,13 @@ namespace TicTakToe;
 
 public class GameUi
 {
+    private readonly IGame _game;
     private readonly TextReader _input;
     private readonly TextWriter _output;
 
-    public GameUi(TextReader input, TextWriter output)
+    public GameUi(IGame game, TextReader input, TextWriter output)
     {
+        _game = game;
         _input = input;
         _output = output;
     }
@@ -18,20 +20,15 @@ public class GameUi
     {
         while (true)
         {
-            if (GetOption() == 0)
-            {
-                break;
-            }
-            
-            var game = new Game.Game();
+            if (GetOption() == 0) break;
 
             for (var i = 1; i < 9; i++)
             {
                 var player = i % 2 == 0;
-                _output.WriteLine($"Player {(player ? "X" : "O") } move:");
+                _output.WriteLine($"Player {(player ? "X" : "O")} move:");
                 var point = GetMoveData();
-                var result = game.MakeMove(point.X, point.Y, player);
-                PrintGameField(game.Field);
+                var result = _game.MakeMove(point.X, point.Y, player);
+                PrintGameField(_game.Field);
 
                 if (result == Result.IncorrectMove)
                 {
@@ -66,16 +63,16 @@ public class GameUi
         {
             _output.Write("Enter X:");
         } while (!int.TryParse(_input.ReadLine(), out x));
-        
+
         int y;
         do
         {
             _output.Write("Enter Y:");
-        } while (!int.TryParse(_input.ReadLine(), out  y));
-    
+        } while (!int.TryParse(_input.ReadLine(), out y));
+
         return new Point(x, y);
     }
-    
+
     private void PrintGameField(bool?[,]? field)
     {
         if (field != null)
@@ -83,20 +80,14 @@ public class GameUi
             for (var i = 0; i < field.GetLength(0); i++)
             {
                 for (var j = 0; j < field.GetLength(1); j++)
-                {
                     if (field[i, j] == null)
-                    {
                         _output.Write("_ ");
-                    }
                     else
-                    {
                         _output.Write((field[i, j] == true ? "X" : "O") + " ");
-                    }
-                }
 
                 _output.WriteLine();
             }
-            
+
             _output.WriteLine("*********************");
         }
     }

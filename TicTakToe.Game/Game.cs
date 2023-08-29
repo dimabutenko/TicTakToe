@@ -1,12 +1,14 @@
 namespace TicTakToe.Game;
 
-public class Game
+public class Game: IGame
 {
-    private const int Size = 3;
+    internal const int Size = 3;
+    private readonly IGameService _gameService;
     public bool?[,] Field { get; }
 
-    public Game()
+    public Game(IGameService gameService)
     {
+        _gameService = gameService;
         Field = new bool?[Size, Size];
     }
 
@@ -23,72 +25,11 @@ public class Game
 
     private Result GetMoveResult(int row, int col, bool value)
     {
-        if (CheckRow(row) || CheckColumn(col) || CheckPrimaryDiagonal(row, col) || CheckSecondaryDiagonal(row, col))
+        if (_gameService.CheckForWinner(Field, row, col))
         {
             return value ? Result.WinnerCrosses : Result.WinnerZeros;
         }
 
         return Field.Cast<bool?>().Any(item => item == null) ? Result.CorrectMove : Result.Draw;
-    }
-
-    private bool CheckRow(int row)
-    {
-        var value = Field[row, 0];
-        
-        for (var i = 1; i < Size; i++)
-        {
-            if (Field[row, i] != value)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private bool CheckColumn(int column)
-    {
-        var value = Field[0, column];
-        for (var i = 1; i < Size; i++)
-        {
-            if (Field[i, column] != value)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private bool CheckPrimaryDiagonal(int row, int column)
-    {
-        if (row != column) return false;
-        
-        var value = Field[0, 0];
-        for (var i = 1; i < Size; i++)
-        {
-            if (Field[i, i] != value)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    
-    private bool CheckSecondaryDiagonal(int row, int column)
-    {
-        if (row + column != Size - 1) return false;
-        
-        var value = Field[0, Size - 1];
-        for (var i = 1; i < Size; i++)
-        {
-            if (Field[i, Size - i - 1] != value)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
