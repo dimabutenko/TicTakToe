@@ -22,30 +22,25 @@ public class GameUi
             {
                 break;
             }
+            
+            var game = new Game.Game();
 
-            int fieldSize;
-            do
-            {
-                _output.WriteLine("Enter size:");
-            } while (!int.TryParse(_input.ReadLine(), out fieldSize));
-
-            var game = new Game.Game(fieldSize);
-
-            for (var i = 1; i < fieldSize * fieldSize; i++)
+            for (var i = 1; i < 9; i++)
             {
                 var player = i % 2 == 0;
                 _output.WriteLine($"Player {(player ? "X" : "O") } move:");
                 var point = GetMoveData();
                 var result = game.MakeMove(point.X, point.Y, player);
-                PrintGameField(game.GetField());
+                PrintGameField(game.Field);
 
-                if (result == GameResult.IncorrectMove)
+                if (result == Result.IncorrectMove)
                 {
                     i--;
                 }
-                else if (result is GameResult.WinnerCrosses or GameResult.WinnerZeros or GameResult.Draw)
+                else if (result is Result.WinnerCrosses or Result.WinnerZeros or Result.Draw)
                 {
                     _output.WriteLine(result);
+                    _output.WriteLine("#####################");
                     break;
                 }
             }

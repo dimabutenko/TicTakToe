@@ -1,6 +1,6 @@
 namespace TicTakToe.Game;
 
-public enum GameResult
+public enum Result
 {
     IncorrectMove = 0,
     CorrectMove,
